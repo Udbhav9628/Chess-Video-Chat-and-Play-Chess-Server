@@ -1,31 +1,15 @@
-const http = require("http");
-const WebSocketServer = require("websocket").server;
-let WebSocket_Connection = null;
+const { WebSocketServer } = require("ws");
 
-const http_Server = http.createServer((req, res) => {
-  console.log("Server Created");
-});
+const wss = new WebSocketServer({ port: 8080 });
 
-const websocket = new WebSocketServer({
-  httpServer: http_Server,
-});
+wss.on("connection", function connection(ws) {
+  ws.on("error", console.error);
 
-websocket.on("request", (request) => {
-  WebSocket_Connection = request.accept(null, request.origin);
-
-  WebSocket_Connection.on("onopen", (e) => {
-    console.log("opened!!", e);
+  ws.on("message", function message(data) {
+    console.log("received: %s", data);
   });
 
-  WebSocket_Connection.on("message", (Message) => {
-    console.log("Message Recieved", Message);
-  });
-
-  WebSocket_Connection.on("close", () => {
-    console.log("Connection Closed");
-  });
+  ws.send("Hello From Server");
 });
 
-http_Server.listen(8080, () => {
-  console.log("Server is Listening to Port 8080");
-});
+console.log("WebSocket is Running on Port 8080");
