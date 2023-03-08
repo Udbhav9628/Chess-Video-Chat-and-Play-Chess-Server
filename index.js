@@ -1,33 +1,43 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const server = require("ws").Server;
-
-const wss = new server({ port: 8080 });
 const app = express();
+const bodyParser = require("body-parser");
+const cors = require("cors");
+const Server = require("http").createServer(app);
 
+const io = require("socket.io")(Server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
+app.use(cors());
 app.use(bodyParser.json());
 
-//WebSocket Server
-wss.on("connection", function connection(ws) {
-  ws.on("message", function message(data) {
-    console.log("received: %s", data);
-    // wss.clients.forEach(function e(Clint) {
-    //   Clint.send(data);
-    // });
-  });
-
-  ws.on("close", () => {
-    console.log("One Clint Disconnected");
-  });
-
-  ws.on("error", console.error);
-
-  console.log("New Clint Connected");
+app.get("/", (req, res) => {
+  return res.status(200).send("App Is Running");
 });
 
-// Http Server
-app.listen("8000", () => {
+io.on("connection", (socket) => {
+  //emit for send events
+  socket.emit("me", socket.id);
+
+  socket.on("disconnect", () => {
+    socket.broadcast.emit("CallEnded");
+  });
+
+  //on for listen events
+  socket.on("callUser", ({ userTocall, signalData, from, name }) => {
+    io.to(userTocall).emit("callUser", { userTocall, signalData, from, name });
+  });
+
+  socket.on("answerCall", ({ signal, to }) => {
+    io.to(to).emit("callAccepted", signal);
+  });
+
+  console.log("new Clint Connected  -  " + socket.id);
+});
+
+Server.listen("8000", () => {
   console.log("Server Is Running on PORT 8000");
 });
-
-console.log("WebSocket is Running on Port 8080");
