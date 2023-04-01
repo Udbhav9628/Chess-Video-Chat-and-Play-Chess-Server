@@ -22,10 +22,6 @@ io.on("connection", (socket) => {
   //emit for send events
   socket.emit("me", socket.id);
 
-  socket.on("disconnect", () => {
-    socket.broadcast.emit("CallEnded");
-  });
-
   //on for listen events
   socket.on("callUser", ({ userTocall, signalData, from, name }) => {
     io.to(userTocall).emit("callUser", { userTocall, signalData, from, name });
@@ -33,6 +29,16 @@ io.on("connection", (socket) => {
 
   socket.on("answerCall", ({ signal, to }) => {
     io.to(to).emit("callAccepted", signal);
+  });
+
+  socket.on("chessMove", ({ moveObj, towhom }) => {
+    console.log(moveObj);
+    console.log(towhom);
+    io.to(towhom).emit("chessMove", moveObj);
+  });
+
+  socket.on("disconnect", () => {
+    socket.broadcast.emit("CallEnded");
   });
 
   console.log("new Clint Connected  -  " + socket.id);
