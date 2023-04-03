@@ -56,6 +56,6 @@ io.on("connection", (socket) => {
   console.log("new Clint Connected  -  " + socket.id);
 });
 
-Server.listen("8000", () => {
-  console.log("Server Is Running on PORT 8000");
+Server.listen("80", () => {
+  console.log("Server Is Running on PORT 80");
 });
