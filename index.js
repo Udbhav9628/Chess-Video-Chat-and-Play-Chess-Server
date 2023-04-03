@@ -4,15 +4,16 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
 const https = require("https");
-// const Server = require("http").createServer(app);
 
-const Key = fs.readFileSync("private.key");
-const Certificate = fs.readFileSync("certificate.crt");
+const Key = fs.readFileSync("./private.key");
+const Certificate = fs.readFileSync("./certificate.crt");
 
 const credentials = {
   Key,
   Certificate,
 };
+
+const Server = require("https").createServer(credentials, app);
 
 // const io = require("socket.io")(Server, {
 //   cors: {
@@ -24,8 +25,8 @@ const credentials = {
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get("/api", (req, res) => {
-  return res.status(200).send("App Is Running");
+app.get("/", (req, res) => {
+  return res.status(200).send("app is running");
 });
 
 // io.on("connection", (socket) => {
@@ -54,10 +55,9 @@ app.get("/api", (req, res) => {
 //   console.log("new Clint Connected  -  " + socket.id);
 // });
 
-app.listen("8000", () => {
-  console.log("Server Is Running on PORT 80");
-});
+// app.listen("8000", () => {
+//   console.log("Server Is Running on PORT 80");
+// });
 
-const httpsServer = https.createServer(credentials, app);
-
-httpsServer.listen(8443);
+// const httpsServer = https.createServer(credentials, app);
+Server.listen(443);
