@@ -24,7 +24,7 @@ const credentials = {
 app.use(cors());
 app.use(bodyParser.json());
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   return res.status(200).send("App Is Running");
 });
 
@@ -54,10 +54,10 @@ app.get("/", (req, res) => {
 //   console.log("new Clint Connected  -  " + socket.id);
 // });
 
-app.listen("80", () => {
+app.listen("443", () => {
   console.log("Server Is Running on PORT 80");
 });
 
-const httpsServer = https.createServer(credentials, app);
+// const httpsServer = https.createServer(credentials, app);
 
-httpsServer.listen(443);
+// httpsServer.listen(8443);
