@@ -3,10 +3,9 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
-const https = require("https");
 
-const Key = fs.readFileSync("./private.key");
-const Certificate = fs.readFileSync("./certificate.crt");
+const Key = fs.readFileSync("private.key");
+const Certificate = fs.readFileSync("certificate.crt");
 
 const credentials = {
   Key,
@@ -55,6 +54,6 @@ io.on("connection", (socket) => {
   console.log("new Clint Connected  -  " + socket.id);
 });
 
-Server.listen("443", () => {
-  console.log("Server Is Running on PORT 443");
-});
+Server.listen(443);
+
+console.log("working fine");
