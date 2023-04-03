@@ -3,6 +3,8 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
+const https = require("https");
+// const Server = require("http").createServer(app);
 
 const Key = fs.readFileSync("private.key");
 const Certificate = fs.readFileSync("certificate.crt");
@@ -12,14 +14,12 @@ const credentials = {
   Certificate,
 };
 
-const Server = require("https").createServer(credentials, app);
-
-const io = require("socket.io")(Server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
+// const io = require("socket.io")(Server, {
+//   cors: {
+//     origin: "*",
+//     methods: ["GET", "POST"],
+//   },
+// });
 
 app.use(cors());
 app.use(bodyParser.json());
@@ -28,32 +28,36 @@ app.get("/", (req, res) => {
   return res.status(200).send("App Is Running");
 });
 
-io.on("connection", (socket) => {
-  //emit for send events
-  socket.emit("me", socket.id);
+// io.on("connection", (socket) => {
+//   //emit for send events
+//   socket.emit("me", socket.id);
 
-  //on for listen events
-  socket.on("callUser", ({ userTocall, signalData, from, name }) => {
-    io.to(userTocall).emit("callUser", { userTocall, signalData, from, name });
-  });
+//   //on for listen events
+//   socket.on("callUser", ({ userTocall, signalData, from, name }) => {
+//     io.to(userTocall).emit("callUser", { userTocall, signalData, from, name });
+//   });
 
-  socket.on("answerCall", ({ signal, to }) => {
-    io.to(to).emit("callAccepted", signal);
-  });
+//   socket.on("answerCall", ({ signal, to }) => {
+//     io.to(to).emit("callAccepted", signal);
+//   });
 
-  socket.on("chessMove", ({ moveObj, towhom }) => {
-    console.log(moveObj);
-    console.log(towhom);
-    io.to(towhom).emit("chessMove", moveObj);
-  });
+//   socket.on("chessMove", ({ moveObj, towhom }) => {
+//     console.log(moveObj);
+//     console.log(towhom);
+//     io.to(towhom).emit("chessMove", moveObj);
+//   });
 
-  socket.on("disconnect", () => {
-    socket.broadcast.emit("CallEnded");
-  });
+//   socket.on("disconnect", () => {
+//     socket.broadcast.emit("CallEnded");
+//   });
 
-  console.log("new Clint Connected  -  " + socket.id);
+//   console.log("new Clint Connected  -  " + socket.id);
+// });
+
+app.listen("80", () => {
+  console.log("Server Is Running on PORT 80");
 });
 
-Server.listen(8080);
+const httpsServer = https.createServer(credentials, app);
 
-console.log("working fine");
+httpsServer.listen(443);
