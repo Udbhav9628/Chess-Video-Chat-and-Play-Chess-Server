@@ -54,10 +54,10 @@ app.get("/api", (req, res) => {
 //   console.log("new Clint Connected  -  " + socket.id);
 // });
 
-app.listen("443", () => {
+app.listen("8000", () => {
   console.log("Server Is Running on PORT 80");
 });
 
-// const httpsServer = https.createServer(credentials, app);
+const httpsServer = https.createServer(credentials, app);
 
-// httpsServer.listen(8443);
+httpsServer.listen(8443);
