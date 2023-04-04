@@ -3,8 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
-const https = require("https");
-const Server = require("http").createServer(app);
+const Server = require("https").createServer(credentials, app);
 
 const key = fs.readFileSync("private.key");
 const cert = fs.readFileSync("certificate.crt");
@@ -52,10 +51,6 @@ io.on("connection", (socket) => {
   console.log("new Clint Connected  -  " + socket.id);
 });
 
-Server.listen("80", () => {
+Server.listen("443", () => {
   console.log("Server Is Running on PORT 443");
 });
-
-const httpsServer = https.createServer(credentials, app);
-
-httpsServer.listen(443);
