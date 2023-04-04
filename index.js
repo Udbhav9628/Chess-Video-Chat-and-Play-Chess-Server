@@ -3,7 +3,6 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
-const Server = require("https").createServer(credentials, app);
 
 const key = fs.readFileSync("private.key");
 const cert = fs.readFileSync("certificate.crt");
@@ -12,6 +11,8 @@ const credentials = {
   key,
   cert,
 };
+
+const Server = require("https").createServer(credentials, app);
 
 const io = require("socket.io")(Server, {
   cors: {
