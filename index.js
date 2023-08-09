@@ -3,9 +3,16 @@ const app = express();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const fs = require("fs");
-const Server = require("http").createServer(app);
 
-const file = fs.readFileSync("./E67174468C9782701A5C62DF37ED4EA6.txt");
+const key = fs.readFileSync("private.key");
+const cert = fs.readFileSync("certificate.crt");
+
+const credentials = {
+  key,
+  cert,
+};
+
+const Server = require("https").createServer(credentials, app);
 
 const io = require("socket.io")(Server, {
   cors: {
@@ -16,15 +23,6 @@ const io = require("socket.io")(Server, {
 
 app.use(cors());
 app.use(bodyParser.json());
-
-app.get(
-  "/.well-known/pki-validation/E67174468C9782701A5C62DF37ED4EA6.txt",
-  (req, res) => {
-    return res.sendFile(
-      "/home/ec2-user/server/Chess-Video-Chat-and-Play-Chess-Server/E67174468C9782701A5C62DF37ED4EA6.txt"
-    );
-  }
-);
 
 app.get("/", (req, res) => {
   return res.status(200).send("App Is Running");
@@ -44,8 +42,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("chessMove", ({ moveObj, towhom }) => {
-    console.log(moveObj);
-    console.log(towhom);
     io.to(towhom).emit("chessMove", moveObj);
   });
 
@@ -56,6 +52,6 @@ io.on("connection", (socket) => {
   console.log("new Clint Connected  -  " + socket.id);
 });
 
-Server.listen("80", () => {
-  console.log("Server Is Running on PORT 80");
+Server.listen("443", () => {
+  console.log("Server Is Running on PORT 443");
 });
