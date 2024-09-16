@@ -12,7 +12,7 @@ const credentials = {
   cert,
 };
 
-const Server = require("https").createServer(credentials, app);
+const Server = require("http").createServer(app);
 
 const io = require("socket.io")(Server, {
   cors: {
@@ -52,6 +52,6 @@ io.on("connection", (socket) => {
   console.log("new Clint Connected  -  " + socket.id);
 });
 
-Server.listen("443", () => {
-  console.log("Server Is Running on PORT 443");
+Server.listen("8000", () => {
+  console.log("Server Is Running on PORT 8000");
 });
